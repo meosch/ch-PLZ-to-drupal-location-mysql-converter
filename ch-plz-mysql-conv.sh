@@ -89,8 +89,8 @@ sed '1,1d' "$infile" |
 # Convert DOS/Windows newlines (CRLF) to Unix newlines (LF). Otherwise we get a dos/windows new line with the longitude and the line wraps in the middle. 
 sed 's/.$//' |
 awk -F ';' '{print"( \""$2"\", \""$1"\", \""$5"\", \""$7"\", \""$6"\", \"1\", \"1\", \"ch\" ),"}' |
-# Replace comma at the end of the last line with a semicolon
-sed '$s/,$/;/' >"$tmpfile"
+# Replace comma at the end of the last line with nothing
+sed '$s/,$//' >"$tmpfile"
 
 # zip, city, state, latitude, longitude, timezone, dst, country - field order in original zipcodes.ch.mysql file included with Drupal location module https://www.drupal.org/project/location
 # PLZ,﻿Ortschaftsname, Kantonskürzel, N, E, 1, 1, ch - fields and static data in the order that this script will output them.
@@ -98,9 +98,13 @@ sed '$s/,$/;/' >"$tmpfile"
 }
 
 add_field_headings_line(){
-sed '1 i\
-INSERT INTO zipcodes (zip, city, state, latitude, longitude, timezone, dst, country) VALUES' "$tmpfile" >"$outfile"
+sed -i '1 i\
+INSERT INTO zipcodes (zip, city, state, latitude, longitude, timezone, dst, country) VALUES' "$tmpfile"
+}
 
+add_update_on_duplicate_lines(){
+sed -e '$a\
+ON DUPLICATE KEY UPDATE city=VALUES(city), state=VALUES(state), latitude=VALUES(latitude), longitude=VALUES(longitude), timezone=VALUES(timezone), dst=VALUES(dst), country=VALUES(country);' "$tmpfile" >"$outfile"
 }
 
 cleanup(){
@@ -139,6 +143,7 @@ notwhatyouwanted
 setvariables2
 convertdata
 add_field_headings_line
+add_update_on_duplicate_lines
 cleanup
 finished
 exitscript
