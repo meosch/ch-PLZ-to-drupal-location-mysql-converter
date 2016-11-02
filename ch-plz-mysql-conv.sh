@@ -97,7 +97,7 @@ sed '$s/,$//' >"$tmpfile"
 }
 
 add_field_headings_line(){
-sed -i '1 i\
+sed -i.bk '1 i\
 INSERT INTO zipcodes (zip, city, state, latitude, longitude, timezone, dst, country) VALUES' "$tmpfile"
 }
 
@@ -107,8 +107,9 @@ ON DUPLICATE KEY UPDATE city=VALUES(city), state=VALUES(state), latitude=VALUES(
 }
 
 cleanup(){
-  rm "$tmpfile"
-  rm "$infile" # Deletes input file
+  rm "${tmpfile}"
+  rm "${tmpfile}.bk" # Deletes backup file made by sed insert.
+  rm "${infile}" # Deletes input file
 echo
 }
 
