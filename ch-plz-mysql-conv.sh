@@ -7,7 +7,7 @@
 ### https://opendata.swiss/en/dataset/amtliches-ortschaftenverzeichnis-mit-postleitzahl-und-perimeter1
 ###
 ### Amtliches Ortschaftenverzeichnis
-### http://www.cadastre.ch/internet/kataster/de/home/services/service/plz.html
+### http://www.cadastre.ch/internet/kataster/en/home/services/service/plz.html
 ###
 ### Download the CSV (Excel) WGS84 format file (PLZO_CSV_WGS84.csv) from the last link above.
 ### Frederick Henderson - 2016.10.21
@@ -23,10 +23,9 @@ export LANG="en_US.UTF-8"
 setvariables1(){
 #Set some variables we will need.
   filenamefromdate=$(date +%Y%m%d)
-# Folder where Filemaker by default places the exported files.
+# location of the file to be processed.
   wd="."
-#  "/Volumes/MEOS\ Server/MEOS\ Medien/\ \ \ Shop\ Import/"
-# The default name suggested by Filemaker for the exported file. We will delete this at the end of this script anyways.
+# The wildcard of the input filename we are looking for.
  infile="${wd}/PLZO_CSV_WGS*.csv"
 }
 
@@ -60,9 +59,9 @@ fi
   # If we have gotten this far we have no input file.
   if [ ! -f "$infile" ]; then
     echo -e "${col_red}Input file ${col_yellow}${infile}${col_red} not found!${col_reset}"
-    echo -e "${col_red}Please download the PLZ data file in the ${col_yellow}CSV (Excel) LV03${col_red} format before running this script.${col_reset}"
+    echo -e "${col_red}Please download the PLZ data file in the ${col_yellow}PLZO_CSV_WGS*.csv${col_red} format before running this script.${col_reset}"
     echo -e "${col_red}The wildcard for the filename to import is ${col_yellow}PLZO_CSV_WGS${col_green}*${col_yellow}.csv${col_red} for conversion from the ${col_yellow}PLZO_CSV_WGS${col_green}*${col_yellow}.zip${col_red} file.${col_reset}"
-    echo -e "${col_red}Download at: ${col_yellow}http://www.cadastre.ch/internet/kataster/de/home/services/service/plz.html${col_reset}"
+    echo -e "${col_red}Download at: ${col_yellow}http://www.cadastre.ch/internet/kataster/en/home/services/service/plz.html${col_reset}"
     exitscript
     exit
 fi
@@ -94,7 +93,7 @@ sed '$s/,$//' >"$tmpfile"
 
 # zip, city, state, latitude, longitude, timezone, dst, country - field order in original zipcodes.ch.mysql file included with Drupal location module https://www.drupal.org/project/location
 # PLZ,﻿Ortschaftsname, Kantonskürzel, N, E, 1, 1, ch - fields and static data in the order that this script will output them.
-# ﻿Ortschaftsname;PLZ;Zusatzziffer;Gemeindename;Kantonskürzel;E;N - field order in file from http://www.cadastre.ch/internet/kataster/de/home/services/service/plz.html
+# ﻿Ortschaftsname;PLZ;Zusatzziffer;Gemeindename;Kantonskürzel;E;N - field order in file from http://www.cadastre.ch/internet/kataster/en/home/services/service/plz.html
 }
 
 add_field_headings_line(){
